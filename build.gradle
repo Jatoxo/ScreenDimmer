@@ -1,0 +1,44 @@
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'org.beryx.runtime' version '1.13.1'
+}
+
+group = 'org.example'
+version = '0.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/com.formdev/flatlaf
+    implementation 'com.formdev:flatlaf:3.4.1'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.14.0'
+}
+
+application {
+    mainClass = 'main.Main'
+}
+
+
+//https://badass-runtime-plugin.beryx.org/releases/latest/
+runtime {
+    additive = true
+    modules = ['jdk.accessibility']
+    jpackage {
+        resourceDir = file("src/main/resources")
+        imageOptions = ["--icon", "src/main/resources/icon2.ico", "--win-console"]
+        imageName = 'screenshade-dimmer'
+        // imageOutputDir = file("$buildDir/my-packaging-image")
+        // installerOutputDir = file("$buildDir/my-packaging-installer")
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
