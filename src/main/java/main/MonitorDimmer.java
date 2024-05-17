@@ -30,33 +30,34 @@ public class MonitorDimmer extends JFrame {
         //System.out.println("Default Transform: "+ getGraphicsConfiguration().getDefaultTransform());
 
         SwingUtilities.invokeLater(() -> {
-            int clampedDim = Math.max(0, Math.min(90, dimLevel));
-
-            dim = percentToDim(clampedOpacity);
-            dimLevel = clampedDim;
+            this.dimLevel = Math.max(0, Math.min(90, dimLevel));
 
             //Hide the window if the dim level is 0
-            if(isVisible() == (dim == 0)) {
-                if(dim == 0) {
+            if(isVisible() == (dimLevel == 0)) {
+                if(dimLevel == 0) {
                     System.out.println("Hiding window");
                 } else {
                     System.out.println("Showing window");
                 }
-                setVisible(dim != 0);
+                setVisible(dimLevel != 0);
             }
 
             repaint();
         });
     }
 
+    /**
+     * Gets the dim level of the window.
+     * @return The dim level (0-100).
+     */
     public int getDim() {
-        return dim;
+        return dimLevel;
     }
 
-    public MonitorDimmer(float opacity, GraphicsDevice screen) {
+    public MonitorDimmer(int initialDim, GraphicsDevice screen) {
         super(screen.getDefaultConfiguration());
 
-        dim = percentToDim(opacity);
+        this.dimLevel = initialDim;
 
         setUndecorated(true);
 
@@ -75,7 +76,7 @@ public class MonitorDimmer extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(new Color(0, 0, 0, dim));
+                g.setColor(new Color(0, 0, 0, mapToByte(dimLevel)));
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };

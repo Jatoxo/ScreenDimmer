@@ -19,6 +19,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.14.0'
+
+    implementation 'com.github.adedayo.intellij.sdk:forms_rt:142.1'
 }
 
 application {

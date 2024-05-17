@@ -22,7 +22,7 @@ import javax.swing.*;
 public class Main {
 
     //If an argument is provided, use it as the initial dim level
-    static float initialDimLevel = 0.2f;
+    static int initialDimLevel = 20;
 
     public static void main(String[] args) {
         parseArgs(args);
@@ -32,7 +32,7 @@ public class Main {
     static void parseArgs(String[] args) {
         if (args.length > 0) {
             try {
-                initialDimLevel = Integer.parseInt(args[0]) / 100f;
+                initialDimLevel = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number: " + args[0]);
             }

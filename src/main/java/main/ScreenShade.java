@@ -15,7 +15,7 @@ import java.util.List;
 public class ScreenShade {
     private final List<MonitorDimmer> dimmers = new ArrayList<>();
 
-    public ScreenShade(float initialDimLevel) {
+    public ScreenShade(int initialDimLevel) {
         setupDimmers(initialDimLevel);
 
         //Create the GUI
@@ -30,7 +30,7 @@ public class ScreenShade {
         //testClient.start();
     }
 
-    private void setupDimmers(float initialDimLevel) {
+    private void setupDimmers(int initialDimLevel) {
         // Create a dimmer for each screen
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
@@ -46,7 +46,7 @@ public class ScreenShade {
      */
     public void setMasterDim(int level) {
         for(MonitorDimmer dimmer : dimmers) {
-            dimmer.setDim(level / 100f);        }
+            dimmer.setDim(level);        }
     }
 
     /**
@@ -56,7 +56,15 @@ public class ScreenShade {
     public int getMasterDim() {
         //Just return the dim level of the first dimmer for now
         //TODO: Implement master dim somehow
-        return dimmers.get(0).dim;
+        return dimmers.get(0).getDim();
+    }
+
+    /**
+     * Get the number of dimmers (screens).
+     * @return The number of dimmers.
+     */
+    public int getDimmerCount() {
+        return dimmers.size();
     }
 
 }
