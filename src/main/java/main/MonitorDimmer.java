@@ -7,14 +7,18 @@ import com.sun.jna.platform.win32.WinUser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * One Window responsible for dimming one physical Monitor.
  */
-public class MonitorDimmer extends JFrame {
+public class MonitorDimmer extends JFrame implements Dimmable {
 
     // The dim level (0-100)
     private int dimLevel;
+
+    private LinkedList<DimListener> listeners = new LinkedList<>();
+
 
 
     /// Converts the dim level (0-100) to a byte (0-255)
@@ -22,15 +26,21 @@ public class MonitorDimmer extends JFrame {
         return (int) (dimLevel * 2.55);
     }
 
+
     /**
      * Set the dim level of the window.
      * @param dimLevel The dim level (0-100).
      */
+    @Override
     public void setDim(int dimLevel) {
-        //System.out.println("Default Transform: "+ getGraphicsConfiguration().getDefaultTransform());
+        final int newDimLevel = Math.max(0, Math.min(90, dimLevel));
+        if (this.dimLevel == newDimLevel) {
+            return;
+        }
 
+        //System.out.println("Default Transform: "+ getGraphicsConfiguration().getDefaultTransform());
         SwingUtilities.invokeLater(() -> {
-            this.dimLevel = Math.max(0, Math.min(90, dimLevel));
+            this.dimLevel = newDimLevel;
 
             //Hide the window if the dim level is 0
             if(isVisible() == (dimLevel == 0)) {
@@ -43,6 +53,8 @@ public class MonitorDimmer extends JFrame {
             }
 
             repaint();
+
+            notifyListeners(newDimLevel);
         });
     }
 
@@ -50,8 +62,14 @@ public class MonitorDimmer extends JFrame {
      * Gets the dim level of the window.
      * @return The dim level (0-100).
      */
+    @Override
     public int getDim() {
         return dimLevel;
+    }
+
+    @Override
+    public void addChangeListener(DimListener listener) {
+        listeners.add(listener);
     }
 
     public MonitorDimmer(int initialDim, GraphicsDevice screen) {
@@ -115,6 +133,13 @@ public class MonitorDimmer extends JFrame {
         hwnd.setPointer(Native.getComponentPointer(w));
         return hwnd;
     }
+
+    private void notifyListeners(int dimLevel) {
+        for(DimListener listener : listeners) {
+            listener.dimChanged(dimLevel);
+        }
+    }
+
 
 }
 

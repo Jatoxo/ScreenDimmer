@@ -2,18 +2,95 @@ package main.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import main.Dimmable;
+import main.Dimming;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Locale;
 
 public class DimSlider {
     private JSpinner spinner1;
-    private JSlider slider1;
+    JSlider slider1;
     private JPanel mainPanel;
+
+    private boolean isSliderChange = false;
+    private boolean isDimmingChange = false;
+
+    /**
+     * A DimSlider is a slider and spinner packaged in a JPanel that can be used
+     * to control the dim level of a Dimmable object.
+     * @param dimmable
+     */
+    public DimSlider(Dimmable dimmable, String title) {
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setEnabled(true);
+            }
+        });
+        slider1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                setEnabled(true);
+            }
+        });
+
+        //Set the title of the panel
+        ((TitledBorder) mainPanel.getBorder()).setTitle(title);
+
+        //Setup the models for the spinner and slider
+        SpinnerNumberModel spinnerModel = new SpinnerNumberModel(dimmable.getDim(), 0, 90, 1);
+        spinner1.setModel(spinnerModel);
+
+        //Set the initial value of the slider
+        slider1.setValue(dimmable.getDim());
+
+        //Update the slider and spinner when the other is changed
+        spinner1.addChangeListener(e -> {
+            slider1.setValue((int) spinner1.getValue());
+        });
+        slider1.addChangeListener(e -> {
+            if(isDimmingChange) {
+                //If the change originated from the dimmable object, don't update the dimmable object
+                return;
+            }
+            isSliderChange = true;
+            spinner1.setValue(slider1.getValue());
+
+            //Only actually set the dim level once
+            dimmable.setDim(slider1.getValue());
+            isSliderChange = false;
+        });
+
+
+        //Listen for changes in the dimmable object
+        dimmable.addChangeListener(level -> {
+            if(isSliderChange) {
+                //If the change originated from the slider, don't update the slider
+                return;
+            }
+            setSliderValue(level);
+        });
+
+    }
+
+    private void setSliderValue(int value) {
+        SwingUtilities.invokeLater(() -> {
+            isDimmingChange = true;
+            //System.out.println("Setting Spinner to " + level);
+            spinner1.setValue(value);
+            isDimmingChange = false;
+        });
+    }
+
 
     /**
      * Get the main panel
@@ -21,6 +98,11 @@ public class DimSlider {
      */
     public JPanel get() {
         return mainPanel;
+    }
+
+    public void setEnabled(boolean enabled) {
+        slider1.setEnabled(enabled);
+        spinner1.setEnabled(enabled);
     }
 
     {
@@ -81,5 +163,9 @@ public class DimSlider {
      */
     public JComponent $$$getRootComponent$$$() {
         return mainPanel;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }

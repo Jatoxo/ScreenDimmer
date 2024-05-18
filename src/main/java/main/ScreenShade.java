@@ -15,6 +15,8 @@ import java.util.List;
 public class ScreenShade {
     private final List<MonitorDimmer> dimmers = new ArrayList<>();
 
+    Dimmable masterDimmable;
+
     public ScreenShade(int initialDimLevel) {
         setupDimmers(initialDimLevel);
 
@@ -37,6 +39,9 @@ public class ScreenShade {
         for(GraphicsDevice screen : screens) {
             dimmers.add(new MonitorDimmer(initialDimLevel, screen));
         }
+
+        //Create a master dimmer that controls all dimmers
+        masterDimmable = new MasterDimmer(dimmers.toArray(new Dimmable[0]));
     }
 
 
@@ -45,18 +50,37 @@ public class ScreenShade {
      * @param level The dim level (0-100).
      */
     public void setMasterDim(int level) {
-        for(MonitorDimmer dimmer : dimmers) {
-            dimmer.setDim(level);        }
+        masterDimmable.setDim(level);
     }
+
 
     /**
      * Get the master dim level for all screens.
      * @return The dim level (0-100).
      */
     public int getMasterDim() {
-        //Just return the dim level of the first dimmer for now
-        //TODO: Implement master dim somehow
-        return dimmers.get(0).getDim();
+        return masterDimmable.getDim();
+    }
+
+    public Dimmable getMasterDimmer() {
+        return masterDimmable;
+    }
+
+    /**
+     * Get a specific dimmer (screen).
+     * @param index The index of the dimmer.
+     * @return The dimmer.
+     */
+    public Dimmable getDimmer(int index) {
+        return dimmers.get(index);
+    }
+
+    /**
+     * Get all real dimmers (screens).
+     * @return An array of dimmers.
+     */
+    public Dimmable[] getDimmers() {
+        return dimmers.toArray(new Dimmable[0]);
     }
 
     /**

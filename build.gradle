@@ -34,7 +34,7 @@ runtime {
     modules = ['jdk.accessibility']
     jpackage {
         resourceDir = file("src/main/resources")
-        imageOptions = ["--icon", "src/main/resources/icon2.ico", "--win-console"]
+        imageOptions = ["--icon", "src/main/resources/icon2.ico"]
         imageName = 'screenshade-dimmer'
         // imageOutputDir = file("$buildDir/my-packaging-image")
         // installerOutputDir = file("$buildDir/my-packaging-installer")

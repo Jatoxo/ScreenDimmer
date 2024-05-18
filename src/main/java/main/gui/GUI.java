@@ -5,10 +5,7 @@ import main.ScreenShade;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 
 public class GUI extends JFrame {
     private ScreenShade screenShade;
@@ -19,6 +16,11 @@ public class GUI extends JFrame {
         this.screenShade = screenShade;
 
         //setMinimumSize(new Dimension(380, 370));
+        //setUndecorated(true);
+        //setType(Type.UTILITY);
+
+
+
         setResizable(false);
         setIconImage(new ImageIcon(getClass().getResource("/icon3.png")).getImage());
 
@@ -49,6 +51,7 @@ public class GUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 if(e.getButton() == MouseEvent.BUTTON1) {
                     setVisible(!isVisible());
+                    toFront();
                 }
             }
         });
