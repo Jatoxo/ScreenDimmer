@@ -21,7 +21,7 @@ public class MasterDimmer implements Dimmable {
      */
     @Override
     public void setDim(int dimLevel) {
-        System.out.println("Setting master dim level to " + dimLevel);
+        //System.out.println("Setting master dim level to " + dimLevel);
         for(Dimmable dimmer : dimmers) {
             dimmer.setDim(dimLevel);
         }

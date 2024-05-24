@@ -13,8 +13,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Locale;
+import java.util.Observable;
 
-public class DimSlider {
+public class DimSlider extends Observable {
     private JSpinner spinner1;
     JSlider slider1;
     private JPanel mainPanel;
@@ -30,15 +31,19 @@ public class DimSlider {
     public DimSlider(Dimmable dimmable, String title) {
         mainPanel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
+                setChanged();
+                notifyObservers(dimmable.getDim());
                 setEnabled(true);
             }
         });
         slider1.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 super.mouseClicked(e);
+                setChanged();
+                notifyObservers(dimmable.getDim());
                 setEnabled(true);
             }
         });
@@ -64,6 +69,9 @@ public class DimSlider {
             }
             isSliderChange = true;
             spinner1.setValue(slider1.getValue());
+
+            setChanged();
+            notifyObservers(slider1.getValue());
 
             //Only actually set the dim level once
             dimmable.setDim(slider1.getValue());
@@ -103,6 +111,14 @@ public class DimSlider {
     public void setEnabled(boolean enabled) {
         slider1.setEnabled(enabled);
         spinner1.setEnabled(enabled);
+    }
+
+    /**
+     * Get the value of the slider/spinner
+     * @return
+     */
+    public int getValue() {
+        return slider1.getValue();
     }
 
     {

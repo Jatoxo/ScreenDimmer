@@ -9,6 +9,8 @@ import main.ScreenShade;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 public class DimmerWindow {
     private JTabbedPane tabbedPane1;
@@ -17,6 +19,10 @@ public class DimmerWindow {
     private JPanel optionsPanel;
 
     private final ScreenShade screenShade;
+
+
+    DimSlider[] dimSliders;
+
 
     public DimmerWindow(ScreenShade screenShade) {
         this.screenShade = screenShade;
@@ -27,16 +33,49 @@ public class DimmerWindow {
 
         DimSlider masterDimmer = new DimSlider(screenShade.getMasterDimmer(), "Master");
         dimPanel.add(masterDimmer.get());
-        masterDimmer.setEnabled(false);
 
+        //Get the available dimmers from ScreenShade
         Dimmable[] dimmers = screenShade.getDimmers();
+
+        //Create a DimSlider for each dimmer
+        dimSliders = new DimSlider[dimmers.length];
+
         for(int i = 0; i < dimmers.length; i++) {
             DimSlider dimSlider = new DimSlider(dimmers[i], "Monitor " + (i + 1));
+            dimSliders[i] = dimSlider;
             dimPanel.add(dimSlider.get());
+            dimSlider.setEnabled(false);
+
+            dimSlider.addObserver((slider, new_value) -> {
+                //When a monitor slider is changed, disable the master slider
+                masterDimmer.setEnabled(false);
+                for(DimSlider monitorSlider : dimSliders) {
+                    monitorSlider.setEnabled(true);
+                }
+            });
         }
 
+        masterDimmer.addObserver((slider, new_value) -> {
+            //When the master slider is changed, disable all monitor sliders
+            lockMonitorDimmers();
+            screenShade.setMasterDim(masterDimmer.getValue());
+        });
+
+        //When the master dimmer is changed programmatically, revert to the master dimmer
+        screenShade.getMasterDimmer().addChangeListener(dimLevel -> {
+            lockMonitorDimmers();
+            masterDimmer.setEnabled(true);
+        });
 
     }
+
+    private void lockMonitorDimmers() {
+        //When the master slider is changed, disable all monitor sliders
+        for(DimSlider monitorSlider : dimSliders) {
+            monitorSlider.setEnabled(false);
+        }
+    }
+
 
     public JPanel getPanel1() {
         return panel1;

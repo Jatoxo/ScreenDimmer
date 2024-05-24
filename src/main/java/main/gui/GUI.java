@@ -21,6 +21,7 @@ public class GUI extends JFrame {
 
 
 
+
         setResizable(false);
         setIconImage(new ImageIcon(getClass().getResource("/icon3.png")).getImage());
 
@@ -31,7 +32,7 @@ public class GUI extends JFrame {
         setContentPane(dimmerWindow.getPanel1());
 
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         pack();
         setVisible(true);
     }
@@ -46,10 +47,14 @@ public class GUI extends JFrame {
         trayIcon.setImageAutoSize(true);
         trayIcon.setToolTip("Screen Shade");
 
+
+
+
         trayIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getButton() == MouseEvent.BUTTON1) {
+                    setState(Frame.NORMAL);
                     setVisible(!isVisible());
                     toFront();
                 }
