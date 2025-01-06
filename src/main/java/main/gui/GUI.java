@@ -34,9 +34,36 @@ public class GUI extends JFrame {
 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         pack();
+
+        setBottomRightPosition();
+
+
+
         if(!startMinimized) {
             setVisible(true);
         }
+    }
+
+    private void setBottomRightPosition() {
+        // Get the screen dimensions and usable screen bounds
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        Rectangle usableBounds = gd.getDefaultConfiguration().getBounds();
+        Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(gd.getDefaultConfiguration());
+
+        // Calculate the usable screen area (excluding taskbar)
+        usableBounds.height -= screenInsets.bottom;
+        usableBounds.width -= screenInsets.right;
+
+        System.out.println("Screen Insets: " + screenInsets);
+        System.out.println("Usable Bounds: " + usableBounds);
+
+        // Calculate the x and y coordinates for the bottom-right corner
+        int x = usableBounds.x + usableBounds.width - getWidth() - 0;
+        int y = usableBounds.y + usableBounds.height - getHeight() - 0;
+
+        // Set the location of the window
+        setLocation(x, y);
     }
 
 
@@ -64,6 +91,13 @@ public class GUI extends JFrame {
         });
 
         PopupMenu popup = new PopupMenu();
+
+        MenuItem resetWindowLocation = new MenuItem("Reset Window Location");
+        resetWindowLocation.addActionListener(e -> {
+            setBottomRightPosition();
+        });
+        popup.add(resetWindowLocation);
+
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.addActionListener(e -> {
             System.exit(0);
