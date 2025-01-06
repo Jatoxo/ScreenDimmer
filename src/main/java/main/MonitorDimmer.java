@@ -75,7 +75,7 @@ public class MonitorDimmer extends JFrame implements Dimmable {
     public MonitorDimmer(int initialDim, GraphicsDevice screen) {
         super(screen.getDefaultConfiguration());
 
-        this.dimLevel = initialDim;
+        this.dimLevel = Math.max(0, Math.min(90, initialDim));;
 
         setUndecorated(true);
 
@@ -83,8 +83,9 @@ public class MonitorDimmer extends JFrame implements Dimmable {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setType(Window.Type.UTILITY);
+        setType(Type.UTILITY);
         setAlwaysOnTop(true); // Make sure the frame stays on top
+        setFocusableWindowState(false); // Prevent the frame from grabbing focus
 
 
 
@@ -105,10 +106,13 @@ public class MonitorDimmer extends JFrame implements Dimmable {
         add(dimPanel);
 
 
+        // Window needs to be visible when calling makeTransparent (don't know why)
         setVisible(true);
 
-
         makeTransparent();
+
+        // Hide the window if the dim level initially is 0
+        setVisible(dimLevel > 0);
     }
 
     /**
