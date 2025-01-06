@@ -10,7 +10,7 @@ import java.awt.event.*;
 public class GUI extends JFrame {
     private ScreenShade screenShade;
 
-    public GUI(ScreenShade screenShade) {
+    public GUI(ScreenShade screenShade, boolean startMinimized) {
         super("Screen Shade");
 
         this.screenShade = screenShade;
@@ -34,7 +34,9 @@ public class GUI extends JFrame {
 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         pack();
-        setVisible(true);
+        if(!startMinimized) {
+            setVisible(true);
+        }
     }
 
 

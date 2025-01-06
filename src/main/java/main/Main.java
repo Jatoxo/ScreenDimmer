@@ -4,6 +4,11 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 
 import javax.swing.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 /*
     Lightweight application to dim the screen of your computer more than the lowest brightness setting.
@@ -20,11 +25,17 @@ import javax.swing.*;
  */
 
 public class Main {
+    public static final String CONFIG_FILE = "config.properties";
 
-    //If an argument is provided, use it as the initial dim level
-    static int initialDimLevel = 20;
+    static ScreenShadeConfig config;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        // Ensure the config file exists
+        ensureConfigFile();
+
+        // Load the config
+        config = loadConfig();
+
         parseArgs(args);
         createAndShowApp();
     }
@@ -32,7 +43,7 @@ public class Main {
     static void parseArgs(String[] args) {
         if (args.length > 0) {
             try {
-                initialDimLevel = Integer.parseInt(args[0]);
+                config.initialDimLevel = Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid number: " + args[0]);
             }
@@ -43,7 +54,47 @@ public class Main {
         FlatLaf.setup(new FlatDarkLaf());
 
         SwingUtilities.invokeLater(() -> {
-            ScreenShade screenShade = new ScreenShade(initialDimLevel);
+            ScreenShade screenShade = new ScreenShade(config);
         });
+    }
+
+
+    private static ScreenShadeConfig loadConfig() throws IOException {
+        Properties properties = new Properties();
+        Path configPath = Paths.get(CONFIG_FILE);
+
+        // Read the config file
+        try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+            properties.load(reader);
+        }
+
+        System.out.printf("Loaded config from: %s%n", configPath.toAbsolutePath());
+
+        // Create a ScreenShadeConfig object from the properties
+        ScreenShadeConfig config = new ScreenShadeConfig();
+        config.initialDimLevel = Integer.parseInt(properties.getProperty("initialDimLevel", "0"));
+        config.enableServer = Boolean.parseBoolean(properties.getProperty("enableServer", "true"));
+        config.startMinimized = Boolean.parseBoolean(properties.getProperty("startMinimized", "false"));
+
+        return config;
+    }
+
+    private static void ensureConfigFile() throws IOException {
+        Path configPath = Paths.get(CONFIG_FILE);
+
+        if (!Files.exists(configPath)) {
+            System.out.println("Config file not found.");
+
+            // Copy default config file from resources
+            try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("default_config.properties")) {
+                if (inputStream == null) {
+                    throw new FileNotFoundException("Default config file not found in resources.");
+                }
+
+                Files.copy(inputStream, configPath);
+                System.out.println("Created default config file at: " + configPath.toAbsolutePath());
+            }
+        }
+
     }
 }

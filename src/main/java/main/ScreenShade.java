@@ -17,15 +17,21 @@ public class ScreenShade {
 
     Dimmable masterDimmable;
 
-    public ScreenShade(int initialDimLevel) {
-        setupDimmers(initialDimLevel);
+    public ScreenShade(ScreenShadeConfig config) {
+        setupDimmers(config.initialDimLevel);
 
         //Create the GUI
-        GUI gui = new GUI(this);
+        GUI gui = new GUI(this, config.startMinimized);
 
-        //Start the server thread
-        ServerThread serverThread = new ServerThread(this, 8777);
-        serverThread.start();
+        if(config.enableServer) {
+            System.out.println("Starting TCP Server");
+            //Start the server thread
+            ServerThread serverThread = new ServerThread(this, 8777);
+            serverThread.start();
+        } else {
+            System.out.println("TCP Server is disabled.");
+        }
+
 
         //Run Test client
         //TestClient testClient = new TestClient();
