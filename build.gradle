@@ -21,7 +21,13 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.14.0'
 
     implementation 'com.github.adedayo.intellij.sdk:forms_rt:142.1'
+
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
 }
+
+
+//The task to get the exe build is jpackageImage
+// the files will be at build\jpackage\screenshade-dimmer
 
 application {
     mainClass = 'main.Main'

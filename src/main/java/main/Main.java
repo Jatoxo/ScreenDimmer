@@ -15,13 +15,16 @@ import java.util.Properties;
     Works by overlaying a partially translucent overlay on top of the screen.
     Works with multiple monitors.
 
-    Also includes a server that listens on port 8777 (default) for incoming connections
+    Includes a server that listens on port 8777 (default) for incoming connections
     and sets the dim level based on the received value.
+
+    Also includes an MQTT client that listens for messages on a topic and sets the dim level based on the received value.
+    (See the config file for MQTT configuration)
 
     //Options:
     // 1. Provide an argument to set the initial dim level (0-100).
-    // 2. --no-server to disable the server.
-    // 3. --no-gui to disable the GUI.
+    // 2. --no-server to disable the server. //Todo
+    // 3. --no-gui to disable the GUI. //Todo
  */
 
 public class Main {
@@ -75,6 +78,13 @@ public class Main {
         config.initialDimLevel = Integer.parseInt(properties.getProperty("initialDimLevel", "0"));
         config.enableServer = Boolean.parseBoolean(properties.getProperty("enableServer", "true"));
         config.startMinimized = Boolean.parseBoolean(properties.getProperty("startMinimized", "false"));
+
+        config.mqttBroker = properties.getProperty("mqtt.broker");
+        config.mqttUsername = properties.getProperty("mqtt.username");
+        config.mqttPassword = properties.getProperty("mqtt.password");
+        config.mqttClientId = properties.getProperty("mqtt.clientId");
+        config.mqttTopicSet = properties.getProperty("mqtt.topicSet");
+        config.mqttTopicState = properties.getProperty("mqtt.topicState");
 
         return config;
     }

@@ -34,7 +34,7 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Listening on port " + port + "...");
+            System.out.println("TCP Server: Listening on port " + port + "...");
 
             while (running) {
                 try {

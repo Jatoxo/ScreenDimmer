@@ -1,7 +1,10 @@
 package main;
 
 import main.gui.GUI;
+import main.server.MqttDimmer;
 import main.server.ServerThread;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,6 +33,29 @@ public class ScreenShade {
             serverThread.start();
         } else {
             System.out.println("TCP Server is disabled.");
+        }
+
+        if(config.mqttClientId != null
+                && config.mqttBroker != null
+                && config.mqttTopicSet != null
+                && config.mqttTopicState != null)
+        {
+            System.out.println("Starting MQTT Client");
+            try {
+                MqttDimmer mqttDimmer = new MqttDimmer(
+                        this,
+                        config.mqttClientId,
+                        config.mqttBroker,
+                        config.mqttTopicSet,
+                        config.mqttTopicState,
+                        config.mqttUsername,
+                        config.mqttPassword
+                );
+            } catch(MqttException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            System.out.println("Not starting MQTT Client. Missing configuration.");
         }
 
 
