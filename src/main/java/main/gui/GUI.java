@@ -55,12 +55,10 @@ public class GUI extends JFrame {
         usableBounds.height -= screenInsets.bottom;
         usableBounds.width -= screenInsets.right;
 
-        System.out.println("Screen Insets: " + screenInsets);
-        System.out.println("Usable Bounds: " + usableBounds);
 
         // Calculate the x and y coordinates for the bottom-right corner
-        int x = usableBounds.x + usableBounds.width - getWidth() - 0;
-        int y = usableBounds.y + usableBounds.height - getHeight() - 0;
+        int x = usableBounds.x + usableBounds.width - getWidth();
+        int y = usableBounds.y + usableBounds.height - getHeight();
 
         // Set the location of the window
         setLocation(x, y);
