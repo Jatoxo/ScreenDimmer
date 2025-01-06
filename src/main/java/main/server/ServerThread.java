@@ -10,14 +10,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class ServerThread extends Thread {
-    private ScreenShade screenShade;
+    private final ScreenShade screenShade;
     private boolean running = true;
-    private int port;
+    private final int port;
 
     // We're using a thread pool to handle clients
     // This way we can avoid creating too many threads
     // Because the cli could spam connections quickly
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
 
     public ServerThread(ScreenShade screenShade, int port) {
