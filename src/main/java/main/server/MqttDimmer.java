@@ -24,16 +24,19 @@ public class MqttDimmer {
 
         client = new MqttClient(broker, clientId, new MemoryPersistence());
 
+
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setAutomaticReconnect(true);
+
         if(username != null && password != null) {
             System.out.println("Connecting to MQTT broker (Using authentication): " + broker);
-            MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(username);
             options.setPassword(password.toCharArray());
-            client.connect(options);
         } else {
             System.out.println("Connecting to MQTT broker (No authentication): " + broker);
-            client.connect();
         }
+
+        client.connect(options);
 
 
 

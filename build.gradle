@@ -4,8 +4,8 @@ plugins {
     id 'org.beryx.runtime' version '1.13.1'
 }
 
-group = 'org.example'
-version = '0.6'
+group = 'io.github.jatoxo'
+version = '0.1.1'
 
 repositories {
     mavenCentral()
