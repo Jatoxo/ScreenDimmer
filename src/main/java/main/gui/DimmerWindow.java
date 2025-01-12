@@ -58,7 +58,7 @@ public class DimmerWindow {
         masterDimmer.addObserver((slider, new_value) -> {
             //When the master slider is changed, disable all monitor sliders
             lockMonitorDimmers();
-            screenShade.setMasterDim(masterDimmer.getValue());
+            //screenShade.setMasterDim(masterDimmer.getValue());
         });
 
         //When the master dimmer is changed programmatically, revert to the master dimmer

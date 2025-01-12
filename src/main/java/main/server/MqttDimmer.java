@@ -45,6 +45,24 @@ public class MqttDimmer {
             System.out.println("Successfully connected to MQTT broker");
         }
 
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                System.out.println("Connection to MQTT broker lost: " + cause.getMessage());
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) {
+                System.out.println("Message arrived: " + topic + " - " + message.toString());
+                //onMessageReceived(topic, message);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                System.out.println("MQTT: Delivery complete");
+            }
+        });
+
         // QoS as 1: Messages should be received at least once, but duplicates are fine, so downgrading from QoS 2 is okay
         client.subscribe(topicSet, 1, this::onMessageReceived);
 
@@ -81,7 +99,7 @@ public class MqttDimmer {
     private void publishDimLevel(int dimLevel) {
         try {
             client.publish(TOPIC_STATE, String.valueOf(dimLevel).getBytes(), 1, false);
-            //System.out.println("Published dim level state: " + dimLevel);
+            System.out.println("Published dim level state: " + dimLevel);
 
         } catch (MqttException e) {
             System.err.println("Failed to publish dim level state: " + e.getMessage());
