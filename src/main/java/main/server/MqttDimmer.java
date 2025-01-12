@@ -36,35 +36,39 @@ public class MqttDimmer {
             System.out.println("Connecting to MQTT broker (No authentication): " + broker);
         }
 
-        client.connect(options);
+        client.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                System.out.println("MQTT Client connected to broker: " + serverURI);
 
 
+                try {
+                    // QoS as 1: Messages should be received at least once, but duplicates are fine, so downgrading from QoS 2 is okay
+                    client.subscribe(topicSet, 1, (topic, message) -> onMessageReceived(topic, message));
+                } catch(MqttException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-
-        if(client.isConnected()) {
-            System.out.println("Successfully connected to MQTT broker");
-        }
-
-        client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-                System.out.println("Connection to MQTT broker lost: " + cause.getMessage());
+                System.out.println("Connection with broker lost: " + cause.getMessage());
             }
 
             @Override
-            public void messageArrived(String topic, MqttMessage message) {
-                System.out.println("Message arrived: " + topic + " - " + message.toString());
-                //onMessageReceived(topic, message);
-            }
+            public void messageArrived(String topic, MqttMessage message) throws Exception {}
 
             @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                System.out.println("MQTT: Delivery complete");
-            }
+            public void deliveryComplete(IMqttDeliveryToken token) {}
         });
 
-        // QoS as 1: Messages should be received at least once, but duplicates are fine, so downgrading from QoS 2 is okay
-        client.subscribe(topicSet, 1, this::onMessageReceived);
+
+        client.connect(options);
+
+        //if(client.isConnected()) {
+        //    System.out.println("Successfully connected to MQTT broker");
+        //}
+
 
         screenShade.getMasterDimmer().addChangeListener(this::publishDimLevel);
 
