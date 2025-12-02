@@ -52,6 +52,9 @@ public class MqttDimmer {
                     // QoS as 1: Messages should be received at least once, but duplicates are fine, so downgrading from QoS 2 is okay
                     client.subscribe(topicSet, 1, (topic, message) -> onMessageReceived(topic, message));
 
+                    //Publish initial dim level
+                    publishDimLevel(screenShade.getMasterDimmer().getDim());
+
                     //Publish an "available" message
                     if(topicAvailability != null) {
                         client.publish(topicAvailability, "online".getBytes(), 1, false);
