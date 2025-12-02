@@ -48,6 +48,7 @@ public class ScreenShade {
                         config.mqttBroker,
                         config.mqttTopicSet,
                         config.mqttTopicState,
+                        config.mqttTopicAvailability,
                         config.mqttUsername,
                         config.mqttPassword
                 );

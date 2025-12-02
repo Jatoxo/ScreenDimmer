@@ -20,6 +20,7 @@ public class ScreenShadeConfig {
     String mqttPassword;
     String mqttTopicSet;
     String mqttTopicState;
+    String mqttTopicAvailability;
 
     public ScreenShadeConfig() {}
 
@@ -48,6 +49,7 @@ public class ScreenShadeConfig {
         config.mqttClientId = properties.getProperty("mqtt.clientId");
         config.mqttTopicSet = properties.getProperty("mqtt.topicSet");
         config.mqttTopicState = properties.getProperty("mqtt.topicState");
+        config.mqttTopicAvailability = properties.getProperty("mqtt.topicAvailability");
 
         return config;
     }

@@ -16,6 +16,7 @@ public class MqttDimmer {
                       String broker,
                       String topicSet,
                       String topicState,
+                      String topicAvailability,
                       String username,
                       String password
     ) throws MqttException {
@@ -27,6 +28,11 @@ public class MqttDimmer {
 
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(true);
+        if(topicAvailability != null) {
+            options.setWill(topicAvailability, "offline".getBytes(), 1, false);
+        }
+
+
 
         if(username != null && password != null) {
             System.out.println("Connecting to MQTT broker (Using authentication): " + broker);
@@ -45,6 +51,11 @@ public class MqttDimmer {
                 try {
                     // QoS as 1: Messages should be received at least once, but duplicates are fine, so downgrading from QoS 2 is okay
                     client.subscribe(topicSet, 1, (topic, message) -> onMessageReceived(topic, message));
+
+                    //Publish an "available" message
+                    if(topicAvailability != null) {
+                        client.publish(topicAvailability, "online".getBytes(), 1, false);
+                    }
                 } catch(MqttException e) {
                     throw new RuntimeException(e);
                 }
